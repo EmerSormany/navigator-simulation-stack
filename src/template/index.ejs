@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Navegador Simulado</title>
+    <style> 
+        body { font-family: sans-serif; padding: 20px; }
+        .adress-bar { background: #eee; padding: 10px; margin-bottom: 20px; border-radius: 5px; display: flex; }
+        input { padding: 5px; width: 300px; }
+        button { padding: 5px 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Simulador de Navegador</h1>
+    <div class="adress-bar">
+        <form action="/back" method="post">
+            <button type="submit">&larr;</button>
+        </form>
+        <form action="/search" method="post">
+            <input type="text" name="search" placeholder="Digite para buscar" required>
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+    <small>URL Atual: <strong><%= page ? page.url : 'about:blank' %></strong></small>
+    
+    <hr>
+
+    <div class="content">
+        <% if (page) { %>
+            <h2><%= page.title %></h2>
+            <ul>
+                <% page.content.forEach(result => { %>
+                    <li>
+                        <a href="<%= result.url %>"><%= result.title %></a>
+                        <p><%= result.snippet %></p>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <div style="text-align: center; color: #888;">
+                <h3>Navegador Vazio</h3>
+                <p>Navegador vazio. Faça uma pesquisa.</p>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>
