@@ -2,48 +2,64 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Navegador Simulado</title>
-    <style> 
-        body { font-family: sans-serif; padding-left: 10px; padding-right: 10px; }
-        .adress-bar { background: #eee; padding: 10px; margin-bottom: 20px; border-radius: 5px; display: flex; }
-        input { padding: 5px; width: 300px; }
-        button { padding: 5px 10px; cursor: pointer; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Browser Simulator</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <h1>Simulador de Navegador</h1>
-    <div class="adress-bar">
-        <form action="/back" method="post">
-            <button type="submit" <% if (!canBack) { %> disabled <% } %> >&larr;</button>
-        </form>
-        <form action="/forward" method="post">
-            <button type="submit" <% if (!canForward) { %> disabled <% } %> >&rarr;</button>
-        </form>
-        <form action="/search" method="post">
-            <input type="text" name="term" placeholder="Digite para buscar" required>
-            <button type="submit">Buscar</button>
-        </form>
-    </div>
-    
-    <hr>
 
-    <div class="content">
-        <% if (page) { %>
-            <h2><%= page.title %></h2>
-            <ul>
+    <div class="browser-window">
+        <div class="toolbar">
+            
+            <form action="/back" method="post">
+                <button type="submit" class="nav-btn" title="Voltar" <% if (!canBack) { %> disabled <% } %>>
+                    <span class="material-icons">arrow_back</span>
+                </button>
+            </form>
+
+            <form action="/forward" method="post">
+                <button type="submit" class="nav-btn" title="Avançar" <% if (!canForward) { %> disabled <% } %>>
+                    <span class="material-icons">arrow_forward</span>
+                </button>
+            </form>
+
+            <button class="nav-btn" onclick="window.location.reload()">
+                <span class="material-icons">refresh</span>
+            </button>
+
+            <form action="/search" method="post" class="address-container">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" name="term" class="url-input" placeholder="Digite uma URL ou termo de pesquisa..." autocomplete="off" required 
+                       value="<%= (page && page.title && page.title.includes('Resultados')) ? page.title.replace('Resultados de busca para ', '') : '' %>">
+            </form>
+
+            <button class="nav-btn">
+                <span class="material-icons">more_vert</span>
+            </button>
+        </div>
+
+        <div class="viewport">
+            <% if (page) { %>
+
                 <% page.content.forEach(result => { %>
-                    <li>
-                        <a href="<%= result.url %>"><%= result.title %></a>
-                        <p><%= result.snippet %></p>
-                    </li>
+                    <div class="result-card">
+                        <span class="result-url"><%= result.url %></span>
+                        <a href="<%= result.url %>" class="result-title"><%= result.title %></a>
+                        <p class="result-snippet"><%= result.snippet %></p>
+                    </div>
                 <% }) %>
-            </ul>
-        <% } else { %>
-            <div style="text-align: center; color: #888;">
-                <h3>Navegador Vazio</h3>
-                <p>Navegador vazio. Faça uma pesquisa.</p>
-            </div>
-        <% } %>
+
+            <% } else { %>
+                <div class="empty-state">
+                    <span class="material-icons">public</span>
+                    <h2>Navegador Simulado</h2>
+                    <p>Digite algo na barra acima para começar a navegar na web.</p>
+                </div>
+            <% } %>
+        </div>
     </div>
+
 </body>
 </html>
