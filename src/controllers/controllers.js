@@ -2,16 +2,19 @@ const { default: axios } = require('axios')
 const HistoricalStack = require('../utils/stack')
 const path = require('path')
 
-const historical = new HistoricalStack()
+const goBack = new HistoricalStack()
+const goForward = new HistoricalStack()
 
 const browserController = {
     index: (_, res) => {
-        const currentPage = historical.peek()
-        const canBack = !historical.isEmpty()
+        const currentPage = goBack.peek()
+        const canBack = !goBack.isEmpty()
+        const canForward = !goForward.isEmpty()
         
         res.render(path.join(__dirname,'../','template','index.ejs'), {
             page: currentPage,
-            canBack
+            canBack,
+            canForward
         })
     },
 
@@ -37,7 +40,8 @@ const browserController = {
                 content: formattedResults
             }
 
-            historical.push(newPage)
+            goBack.push(newPage)
+            goForward.clear()
 
             res.redirect('/')
         } catch (error) {
@@ -47,7 +51,22 @@ const browserController = {
     },
 
     back: (_, res) => {
-        historical.pop()
+        const page = goBack.pop()
+
+        if (page) {
+            goForward.push(page)
+        }
+
+        res.redirect('/')
+    },
+
+    forward: (_, res) => {
+        const page = goForward.pop()
+
+        if (page) {
+            goBack.push(page)
+        }
+
         res.redirect('/')
     }
 }

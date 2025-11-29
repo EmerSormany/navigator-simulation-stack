@@ -37,6 +37,10 @@ class HistoricalStack {
     peek(){
         return this.top === null ? null : this.top.current
     }
+
+    clear(){
+        this.top = null
+    }
 }
 
 module.exports = HistoricalStack
