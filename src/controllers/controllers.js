@@ -19,10 +19,11 @@ const browserController = {
     },
 
     search: async (req, res) => {
-        const {search} = req.body
+        const {term} = req.body
 
+        // Para testar sem buscador do google comento desta linha
         try {
-            const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.CX}&q=${encodeURIComponent(search)}`
+            const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.CX}&q=${encodeURIComponent(term)}`
 
             const response = await axios.get(url)
 
@@ -35,8 +36,7 @@ const browserController = {
             }))
             
             const newPage = {
-                title: `Resultados de busca para ${search}`,
-                url: `https://www.google.com/search?q=${search}`,
+                title: `Resultados de busca para ${term}`,
                 content: formattedResults
             }
 
@@ -45,9 +45,18 @@ const browserController = {
 
             res.redirect('/')
         } catch (error) {
-            console.log("erro do google: ", error.message);
+            console.log("erro do google: ", error.message)
             res.redirect('/')
         }
+        // até esta linha e descomente o bloco comentanado abaixo
+
+        // const response = googleSearchSimulator(term)
+        // const newPage = {
+        //         title: `Resultados de busca para ${term}`,
+        //         content: response
+        // }
+        // goBack.push(newPage)
+        // res.redirect('/')
     },
 
     back: (_, res) => {
@@ -71,13 +80,24 @@ const browserController = {
     }
 }
 
-//Função criada para simular buscar no google antes de implementar a busca de fato
-// por questões de gasto com API a função será mantida comentada para ser utilizada novamente, se necessário
-// function googleSearchSimulator(search) {
+/**
+ * Função criada para simular busca do google caso você não possua e não queira criar cadastro na plataforma 
+ * Google Cloud (https://console.cloud.google.com/), para criar sua chave de API, e criar seu ID do motor de busca
+ * (https://programmablesearchengine.google.com/), necessários para funcionamento com buscador Google
+ * 
+ * Se não quiser seguir os passos descritos acima, basta comentar todo o bloco try catch, que possui a implementação
+ * do buscador google, e descomentar a função abaixo (googleSearchSimulator) e também descomentar o bloco comentado
+ * dentro da propriedade 'search'.
+ * 
+ * Com isso o projeto funcionará plenamento, simulando navegação no histórico de buscas através dos botões voltar e 
+ * avançar de um navegador web.
+ * @param {string} term Busca digitada no Google. 
+ */
+// function googleSearchSimulator(term) {
 //     return [
-//         { title: `Definição de ${search}`, snippet: `Aqui está a explicação completa sobre ${search}...` },
-//         { title: `Imagens de ${search}`, snippet: `Várias fotos legais de ${search}...` },
-//         { title: `Wikipédia: ${search}`, snippet: `Artigo enciclopédico sobre ${search}.` }
+//         { title: `Definição de ${term}`, snippet: `Aqui está a explicação completa sobre ${term}...` },
+//         { title: `Imagens de ${term}`, snippet: `Várias fotos legais de ${term}...` },
+//         { title: `Wikipédia: ${term}`, snippet: `Artigo enciclopédico sobre ${term}.` }
 //     ];
 // }
 
